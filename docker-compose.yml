@@ -6,6 +6,6 @@ services:
     volumes:
       - ~/apps/postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=foodie
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_USER=vincent
       - POSTGRES_DB=foodie

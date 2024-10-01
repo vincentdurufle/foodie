@@ -4,6 +4,8 @@ import { object, string } from 'zod';
 import prisma from '@/lib/prisma';
 import { saltAndHashPassword } from '@/utils/auth';
 import { signIn } from '@/auth';
+import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 
 const createAccount = async (prevState: unknown, formData: FormData) => {
   const schema = object({
@@ -39,7 +41,7 @@ const createAccount = async (prevState: unknown, formData: FormData) => {
 
   if (alreadyExists) {
     return {
-      message: { email: 'User already exists' },
+      message: { error: 'User already exists' },
     };
   }
 
@@ -55,12 +57,59 @@ const createAccount = async (prevState: unknown, formData: FormData) => {
     },
   });
 
-  await signIn('credentials', {
-    email: formData.get('email'),
-    password: formData.get('password'),
-    redirect: true,
-    redirectTo: '/',
-  });
+  try {
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirect: false,
+    });
+    redirect('/');
+  } catch (e) {
+    if (isRedirectError(e)) throw e;
+    return {
+      message: {
+        error: 'An error occurred',
+      },
+    };
+  }
 };
 
-export { createAccount };
+const signInAccount = async (prevState: unknown, formData: FormData) => {
+  const schema = object({
+    email: string({ required_error: 'Email is required' }).email(
+      'Invalid email'
+    ),
+    password: string({ required_error: 'Password is required' })
+      .min(3, 'Password must be more than 3 letters')
+      .max(32, 'Password must be less than 32 letters'),
+  });
+
+  const validatedFields = schema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      message: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirect: false,
+    });
+    redirect('/');
+  } catch (e) {
+    if (isRedirectError(e)) throw e;
+    return {
+      message: {
+        error: 'Either your password or email does not match',
+      },
+    };
+  }
+};
+
+export { createAccount, signInAccount };

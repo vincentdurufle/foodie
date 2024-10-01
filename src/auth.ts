@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import { User } from '@prisma/client';
 import { compareHashAndPassword } from '@/utils/auth';
+import { AccessDenied } from '@auth/core/errors';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -27,7 +28,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user) {
           // No user found, so this is their first attempt to login
           // meaning this is also the place you could do registration
-          throw new Error('User not found.');
+          throw new AccessDenied('Unauthorised', {
+            status: 401,
+          });
         }
 
         const isIdentical = await compareHashAndPassword(
@@ -36,7 +39,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
 
         if (!isIdentical) {
-          throw new Error('Password does not match');
+          throw new AccessDenied('Unauthorised', {
+            status: 401,
+          });
         }
 
         // return user object with their profile data

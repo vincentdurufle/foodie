@@ -45,6 +45,7 @@ const CreateAccount = () => {
         />
         <p className="text-red-500 pl-4 text-xs">{state?.message?.password}</p>
       </div>
+      <p className="text-red-500 pl-4">{state?.message?.error}</p>
       <Button type="submit">Submit</Button>
     </form>
   );

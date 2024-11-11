@@ -12,6 +12,7 @@ const CreateAccount = () => {
 
   return (
     <form
+      id="createAccount"
       action={action}
       className="flex flex-col justify-center h-full items-center p-4 gap-2"
     >

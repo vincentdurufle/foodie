@@ -3,6 +3,8 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import ReactQueryProvider from '@/providers/ReactQueryProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -25,9 +27,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto_mono.variable} antialiased`}>
         <div className="min-h-screen w-full bg-background grid grid-rows-[auto_1fr_auto]">
-          <Nav />
-          <main className="flex">{children}</main>
-          <Footer />
+          <ReactQueryProvider>
+            <Nav />
+            <main className="flex">{children}</main>
+            <Toaster />
+            <Footer />
+          </ReactQueryProvider>
         </div>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import UserNav from '@/components/UserNav';
+import UserNav from '@/components/nav/UserNav';
 
 const Nav = () => {
   return (

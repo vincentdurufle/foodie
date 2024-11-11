@@ -13,6 +13,7 @@ const SignInPage = () => {
   return (
     <div className="flex justify-center items-center p-4 bg-secondary">
       <form
+        id="signIn"
         action={action}
         className="flex flex-col justify-center items-center p-4 gap-2 w-2/3 min-h-[50%] bg-white rounded-xl"
       >

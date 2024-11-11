@@ -8,7 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Logout from '@/components/Logout';
+import Logout from '@/components/nav/Logout';
+import Dashboard from '@/components/nav/Dashboard';
 
 const UserNav = async () => {
   const session = await auth();
@@ -29,6 +30,7 @@ const UserNav = async () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <Dashboard />
           <Logout />
         </DropdownMenuContent>
       </DropdownMenu>

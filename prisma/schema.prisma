@@ -8,7 +8,10 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   email    String   @unique
   password String   @unique
   username String
@@ -16,7 +19,10 @@ model User {
 }
 
 model Recipe {
-  id          Int                @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   title       String
   description String
   category    CategoryRecipeType
@@ -28,7 +34,10 @@ model Recipe {
 }
 
 model Ingredient {
-  id      Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   name    String
   recipes Recipe[]
 }

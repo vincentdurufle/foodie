@@ -1,10 +1,16 @@
-import { CategoryRecipeType, Ingredient, RecipeType } from '@prisma/client';
+import {
+  CategoryRecipeType,
+  Ingredient,
+  Recipe,
+  RecipeType,
+} from '@prisma/client';
 import { array, nativeEnum, number, object, string, z } from 'zod';
 import { ActionMeta } from 'react-select';
 import axios from 'axios';
 import { UseFieldArrayRemove } from 'react-hook-form';
 
 const createSchema = object({
+  id: number().optional(),
   title: string({ required_error: 'Title is required' }).min(
     3,
     'Title must be more than 3 letters'
@@ -75,8 +81,12 @@ const onChangeIngredients = (
   }
 };
 
-const onSubmitRecipe = (values: z.infer<typeof createSchema>) => {
-  return axios.post<RecipeType>(`/api/recipes`, values, {});
+const onCreateSubmitRecipe = (values: z.infer<typeof createSchema>) => {
+  return axios.post<Recipe>(`/api/recipes`, values, {});
+};
+
+const onEditSubmitRecipe = (values: z.infer<typeof createSchema>) => {
+  return axios.put<Recipe>(`/api/recipes/${values.id}`, values, {});
 };
 
 export {
@@ -84,5 +94,6 @@ export {
   createIngredientOption,
   onChangeIngredients,
   createSchema,
-  onSubmitRecipe,
+  onCreateSubmitRecipe,
+  onEditSubmitRecipe,
 };

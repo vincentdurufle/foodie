@@ -10,6 +10,9 @@ const RecipesList = async () => {
     where: {
       authorId: session?.user?.id,
     },
+    orderBy: {
+      updatedAt: 'desc',
+    },
   });
 
   return (

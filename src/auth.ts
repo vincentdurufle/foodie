@@ -7,7 +7,13 @@ import { AccessDenied } from '@auth/core/errors';
 
 declare module 'next-auth' {
   interface Session {
-    user: Pick<User, 'password' | 'email'> & DefaultSession['user'];
+    user: Pick<User, 'password' | 'email' | 'id'> & DefaultSession['user'];
+  }
+}
+
+declare module '@auth/core/jwt' {
+  interface JWT {
+    id?: number;
   }
 }
 
@@ -67,4 +73,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    jwt({ token, user }) {
+      if (user && user.id) {
+        token.id = parseInt(user.id);
+      }
+      return token;
+    },
+    session({ session, token }) {
+      // @ts-expect-error type error from next auth
+      session.user.id = token.id;
+
+      return session;
+    },
+  },
 });

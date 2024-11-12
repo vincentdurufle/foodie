@@ -7,7 +7,7 @@ import { useFormState } from 'react-dom';
 
 const CreateAccount = () => {
   const [state, action] = useFormState(createAccount, {
-    message: '',
+    message: {},
   });
 
   return (
@@ -24,7 +24,11 @@ const CreateAccount = () => {
           name="username"
           placeholder="Enter your username"
         />
-        <p className="text-red-500 pl-4 text-sm">{state?.message?.username}</p>
+        {'username' in state.message && (
+          <p className="text-red-500 pl-4 text-sm">
+            {state?.message?.username}
+          </p>
+        )}
       </div>
       <div className="flex flex-col w-2/3 mb-2">
         <label htmlFor="email">Email</label>
@@ -34,7 +38,9 @@ const CreateAccount = () => {
           id="email"
           placeholder="Enter your email"
         />
-        <p className="text-red-500 pl-4 text-xs">{state?.message?.email}</p>
+        {'email' in state.message && (
+          <p className="text-red-500 pl-4 text-xs">{state?.message?.email}</p>
+        )}
       </div>
       <div className="flex flex-col w-2/3 mb-2">
         <label htmlFor="password">Password</label>
@@ -44,9 +50,15 @@ const CreateAccount = () => {
           id="password"
           placeholder="Enter your password"
         />
-        <p className="text-red-500 pl-4 text-xs">{state?.message?.password}</p>
+        {'password' in state.message && (
+          <p className="text-red-500 pl-4 text-xs">
+            {state?.message?.password}
+          </p>
+        )}
       </div>
-      <p className="text-red-500 pl-4">{state?.message?.error}</p>
+      {'error' in state.message && (
+        <p className="text-red-500 pl-4">{state?.message?.error}</p>
+      )}
       <Button type="submit">Submit</Button>
     </form>
   );

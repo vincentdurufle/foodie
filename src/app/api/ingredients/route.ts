@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   const json: {
@@ -29,9 +30,11 @@ export async function POST(request: NextRequest) {
 
   const created = await prisma.ingredient.create({
     data: {
-      name,
+      name: name.charAt(0).toUpperCase() + name.slice(1),
     },
   });
+
+  revalidatePath('/admin');
 
   return Response.json(created, {
     status: 201,

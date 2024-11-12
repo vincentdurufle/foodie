@@ -7,7 +7,7 @@ import { AccessDenied } from '@auth/core/errors';
 
 declare module 'next-auth' {
   interface Session {
-    user: Pick<User, 'password' | 'email' | 'id'> & DefaultSession['user'];
+    user: Pick<User, 'email' | 'id'> & DefaultSession['user'];
   }
 }
 

@@ -1,12 +1,14 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import RecipesList from '@/components/admin/RecipesList';
 
 const AdminPage = () => {
   return (
-    <div className="p-14">
-      <Link href="admin/recipes/create">
+    <div className="p-14 w-full">
+      <Link href="recipes/new">
         <Button size="lg">Create new recipe</Button>
       </Link>
+      <RecipesList />
     </div>
   );
 };

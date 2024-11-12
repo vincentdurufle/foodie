@@ -41,7 +41,9 @@ const createAccount = async (prevState: unknown, formData: FormData) => {
 
   if (alreadyExists) {
     return {
-      message: { error: 'User already exists' },
+      message: {
+        error: 'User already exists',
+      },
     };
   }
 

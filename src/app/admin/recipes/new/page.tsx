@@ -114,6 +114,7 @@ const CreateRecipePage = () => {
                   Description
                 </FormLabel>
                 <Textarea
+                  rows={6}
                   required
                   placeholder="Description of the recipe"
                   {...field}

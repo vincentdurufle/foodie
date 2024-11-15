@@ -10,6 +10,7 @@ export async function PUT(
 ) {
   const session = await auth();
   const id = parseInt((await params).id);
+
   if (!session?.user) {
     return NextResponse.json({ error: 'User not found' }, { status: 403 });
   }
@@ -45,4 +46,25 @@ export async function PUT(
   } catch (e) {
     return NextResponse.json({ e }, { status: 400 });
   }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const id = parseInt((await params).id);
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { id },
+  });
+
+  if (!recipe) {
+    return new Response(null, { status: 204 });
+  }
+
+  await prisma.recipe.delete({
+    where: { id },
+  });
+
+  return new Response(null, { status: 204 });
 }

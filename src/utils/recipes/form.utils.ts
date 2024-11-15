@@ -4,7 +4,7 @@ import {
   Recipe,
   RecipeType,
 } from '@prisma/client';
-import { array, nativeEnum, number, object, string, z } from 'zod';
+import { array, coerce, nativeEnum, number, object, string, z } from 'zod';
 import { ActionMeta } from 'react-select';
 import axios from 'axios';
 import { UseFieldArrayRemove } from 'react-hook-form';
@@ -25,6 +25,8 @@ const createSchema = object({
     object({
       name: string(),
       id: number(),
+      createdAt: coerce.date(),
+      updatedAt: coerce.date(),
     })
   ).nonempty(),
 });
@@ -81,12 +83,16 @@ const onChangeIngredients = (
   }
 };
 
-const onCreateSubmitRecipe = (values: z.infer<typeof createSchema>) => {
+const createSubmitRecipe = (values: z.infer<typeof createSchema>) => {
   return axios.post<Recipe>(`/api/recipes`, values, {});
 };
 
-const onEditSubmitRecipe = (values: z.infer<typeof createSchema>) => {
+const editSubmitRecipe = (values: z.infer<typeof createSchema>) => {
   return axios.put<Recipe>(`/api/recipes/${values.id}`, values, {});
+};
+
+const deleteRecipe = (id: number) => {
+  return axios.delete(`/api/recipes/${id}`, {});
 };
 
 export {
@@ -94,6 +100,7 @@ export {
   createIngredientOption,
   onChangeIngredients,
   createSchema,
-  onCreateSubmitRecipe,
-  onEditSubmitRecipe,
+  createSubmitRecipe,
+  editSubmitRecipe,
+  deleteRecipe,
 };

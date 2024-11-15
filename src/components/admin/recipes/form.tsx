@@ -6,10 +6,11 @@ import { z } from 'zod';
 import {
   createIngredientOption,
   createSchema,
+  createSubmitRecipe,
+  deleteRecipe,
+  editSubmitRecipe,
   loadIngredientOptions,
   onChangeIngredients,
-  onCreateSubmitRecipe,
-  onEditSubmitRecipe,
 } from '@/utils/recipes/form.utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -41,6 +42,7 @@ import AsyncCreatableSelect from 'react-select/async-creatable';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import DeleteRecipe from '@/components/admin/recipes/deleteRecipe';
 
 type RecipeFormProps = {
   recipe?: Recipe;
@@ -72,12 +74,29 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
     []
   );
 
-  const mutation = useMutation({
-    mutationFn: recipe ? onEditSubmitRecipe : onCreateSubmitRecipe,
+  const onUpsertMutation = useMutation({
+    mutationFn: recipe ? editSubmitRecipe : createSubmitRecipe,
     onSuccess: () => {
       toast({
         variant: 'success',
         description: `Recipe ${recipe ? 'edited' : 'created'} successfully.`,
+      });
+      router.push('..');
+      router.refresh();
+    },
+    onError: () =>
+      toast({
+        variant: 'destructive',
+        description: 'An error occurred please try again',
+      }),
+  });
+
+  const onDeleteMutation = useMutation({
+    mutationFn: deleteRecipe,
+    onSuccess: () => {
+      toast({
+        variant: 'success',
+        description: `Recipe successfully deleted.`,
       });
       router.push('..');
       router.refresh();
@@ -96,7 +115,7 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof createSchema>) => {
-    mutation.mutate(values);
+    onUpsertMutation.mutate(values);
   };
 
   return (
@@ -111,7 +130,15 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
           className="flex flex-col gap-4 w-1/2 m-auto p-4 border border-secondary shadow-md rounded"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <h3 className="mb-2">{recipe ? 'Edit' : 'Create'} a recipe</h3>
+          <div className="flex justify-between">
+            <h3 className="mb-2">{recipe ? 'Edit' : 'Create'} a recipe</h3>
+            {recipe && (
+              <DeleteRecipe
+                recipeId={recipe.id}
+                onDeleteMutation={onDeleteMutation}
+              ></DeleteRecipe>
+            )}
+          </div>
           <FormField
             control={form.control}
             name="title"
@@ -238,6 +265,8 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
                   getNewOptionData={(inputValue) => ({
                     id: 0,
                     name: inputValue,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                   })}
                   defaultOptions={true}
                   onChange={(_, actionType) =>
@@ -249,8 +278,11 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
               </FormItem>
             )}
           />
-          <Button disabled={mutation.isPending} type="submit">
-            {mutation.isPending && <Loader2 className="animate-spin" />}
+          <Button
+            disabled={onUpsertMutation.isPending || onDeleteMutation.isPending}
+            type="submit"
+          >
+            {onUpsertMutation.isPending && <Loader2 className="animate-spin" />}
             Submit
           </Button>
         </form>

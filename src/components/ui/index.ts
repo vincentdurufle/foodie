@@ -7,3 +7,4 @@ export * from './button';
 export * from './dropdown-menu';
 export * from './input';
 export * from './textarea';
+export * from './alert-dialog';

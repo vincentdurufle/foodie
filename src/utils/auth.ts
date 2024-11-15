@@ -8,4 +8,5 @@ const saltAndHashPassword = async (password: string): Promise<string> => {
 const compareHashAndPassword = async (hash: string, password: string) => {
   return await bcrypt.compare(password, hash);
 };
+
 export { saltAndHashPassword, compareHashAndPassword };

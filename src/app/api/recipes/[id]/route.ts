@@ -17,7 +17,7 @@ export async function PUT(
 
   try {
     const json = await request.json();
-    const { title, type, ingredients, description, category } =
+    const { title, type, ingredients, description, category, cover } =
       createSchema.parse(json);
 
     const response = await prisma.recipe.update({
@@ -34,6 +34,16 @@ export async function PUT(
             id: ingredient.id,
           })),
         },
+        cover: cover
+          ? {
+              connectOrCreate: {
+                where: {
+                  filename: cover?.filename,
+                },
+                create: cover,
+              },
+            }
+          : undefined,
       },
     });
 

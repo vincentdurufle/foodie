@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const json = await request.json();
-    const { title, type, ingredients, description, category } =
+    const { title, type, ingredients, description, category, cover } =
       createSchema.parse(json);
 
     const response = await prisma.recipe.create({
@@ -32,6 +32,11 @@ export async function POST(request: NextRequest) {
             id: ingredient.id,
           })),
         },
+        cover: cover
+          ? {
+              create: cover,
+            }
+          : undefined,
       },
     });
 

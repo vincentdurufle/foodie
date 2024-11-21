@@ -16,6 +16,7 @@ const EditRecipePage = async ({ params }: EditRecipePageProps) => {
     },
     include: {
       ingredients: true,
+      cover: true,
     },
   });
 

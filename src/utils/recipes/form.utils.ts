@@ -29,6 +29,12 @@ const createSchema = object({
       updatedAt: coerce.date(),
     })
   ).nonempty(),
+  cover: object({
+    title: string(),
+    filename: string(),
+    extension: string(),
+    size: number(),
+  }).optional(),
 });
 
 const loadIngredientOptions = async (

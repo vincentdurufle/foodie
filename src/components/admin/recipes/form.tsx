@@ -19,7 +19,7 @@ import {
   Recipe,
   RecipeType,
 } from '@prisma/client';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import debounce from '@/utils/debounce';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -43,6 +43,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DeleteRecipe from '@/components/admin/recipes/deleteRecipe';
+import { getImgHippo, uploadImage } from '@/utils/images/image.utils';
 
 type RecipeFormProps = {
   recipe?: Recipe;
@@ -50,6 +51,7 @@ type RecipeFormProps = {
 
 const RecipeForm = ({ recipe }: RecipeFormProps) => {
   const router = useRouter();
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof createSchema>>({
     resolver: zodResolver(createSchema),
@@ -63,7 +65,6 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
         }
       : recipe,
   });
-
   const loadIngredientOptionsDebounced = useCallback(
     debounce(
       (inputValue: string, callback: (options: Ingredient[]) => void) => {
@@ -119,7 +120,7 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full mb-8">
       <Link href=".." className="self-end m-4">
         <Button size="lg" variant="secondary">
           Back
@@ -278,6 +279,42 @@ const RecipeForm = ({ recipe }: RecipeFormProps) => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="cover"
+            render={({ field }) => (
+              <FormItem>
+                <div className="grid w-full items-center gap-1.5">
+                  <FormLabel className="text-sm font-light">Picture</FormLabel>
+                  <Input
+                    id="picture"
+                    type="file"
+                    multiple={false}
+                    className="file:bg-black-50 file:text-black-700 hover:file:bg-black-100 file:border file:border-solid file:border-black-700 file:rounded-md border-black-600"
+                    onChange={(event) => {
+                      setIsLoadingImage(true);
+                      uploadImage(event)
+                        .then((data) => field.onChange(data))
+                        .finally(() => setIsLoadingImage(false));
+                    }}
+                  />
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="relative">
+            <img
+              className="p-2 border-black-200 border max-w-[400px] max-h-[400px] object-contain"
+              src={getImgHippo(form.getValues().cover?.filename)}
+              alt="preview image"
+            />
+            {isLoadingImage && (
+              <div className="opacity-70 absolute w-full h-full flex justify-center items-center bg-black/10 top-0 transition">
+                <Loader2 className="animate-spin" />
+              </div>
+            )}
+          </div>
           <Button
             disabled={onUpsertMutation.isPending || onDeleteMutation.isPending}
             type="submit"

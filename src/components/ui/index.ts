@@ -8,3 +8,4 @@ export * from './dropdown-menu';
 export * from './input';
 export * from './textarea';
 export * from './alert-dialog';
+export * from './card';
